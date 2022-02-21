@@ -41,6 +41,6 @@ func compareCards(cardOneVal cardVal, cardOneSuit cardSuit, cardTwoVal cardVal, 
 }//some kind of error here???
 
 func main(){
-	compareCards(5,6,7,8)
+	fmt.printf(compareCards(2,3,4,5))
 }
 
