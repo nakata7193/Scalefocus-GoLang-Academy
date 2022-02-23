@@ -3,6 +3,7 @@ package main
 import "fmt"
 
 type cardVal = int
+
 const (
 	two cardVal = iota + 2
 	three
@@ -20,6 +21,7 @@ const (
 )
 
 type cardSuit = int
+
 const (
 	club cardSuit = iota + 1
 	diamond
@@ -28,19 +30,27 @@ const (
 )
 
 func compareCards(cardOneVal cardVal, cardOneSuit cardSuit, cardTwoVal cardVal, cardTwoSuit cardSuit) int {
-	if cardOneSuit != cardTwoSuit {
+	//checks if suits are equal
+	if cardOneSuit == cardTwoSuit {
 		if cardOneVal == cardTwoVal {
 			return 0
-		} else if cardOneVal > cardTwoVal{
-			return -1
-		} else{
+		} else if cardOneVal < cardTwoVal {
 			return 1
+		} else {
+			return -1 
 		}
-	} 
 	}
-}//some kind of error here???
-
-func main(){
-	fmt.printf(compareCards(2,3,4,5))
+	//checks if suits are not equal
+	if cardOneSuit != cardTwoSuit{
+		if cardOneSuit < cardTwoSuit{
+			return 1
+		} else {
+			return -1
+		}
+	}
+	return -10
 }
 
+func main() {
+	fmt.Print(compareCards(7, 1, 7, 2))
+}
