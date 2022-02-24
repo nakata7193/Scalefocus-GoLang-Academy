@@ -1,6 +1,6 @@
 package main
 
-
+import "github.com/nakata7193/Week_2_Lecture_5/cards"
 import "fmt"
 
 func compareCards(cardOne Card, cardTwo Card) int {
@@ -28,3 +28,4 @@ func compareCards(cardOne Card, cardTwo Card) int {
 func main() {
 	fmt.Print(compareCards(7, 1, 7, 2))
 }
+

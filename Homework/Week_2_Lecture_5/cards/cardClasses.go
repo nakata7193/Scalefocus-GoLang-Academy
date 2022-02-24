@@ -27,7 +27,10 @@ const (
 	spade
 )
 
-type Card struct {
-	CardVal  cardVal
+
+type Card struct{
+	CardVal cardVal
 	CardSuit cardSuit
 }
+
+
