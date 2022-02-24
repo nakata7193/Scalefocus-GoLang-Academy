@@ -2,11 +2,9 @@ package main
 
 import (
 	"fmt"
-	"reflect"
 )
 
 type cardVal = int
-
 
 const (
 	two cardVal = iota + 2
@@ -38,17 +36,31 @@ type Card struct {
 	CardSuit cardSuit
 }
 
-cardOne := Card{4,3}
-
 func compareCards(cardOne Card, cardTwo Card) int {
 	//checks if suits are equal
-	if reflect.DeepEqual(cardOne, cardTwo) {
-		return 0
-	} else if cardOne < cardTwo {
-		return 1
+	if cardOne.CardSuit == cardTwo.CardSuit {
+		if cardOne.CardVal == cardTwo.CardVal {
+			return 0
+		} else if cardOne.CardVal < cardTwo.CardVal {
+			return 1
+		} else {
+			return -1
+		}
 	}
+	//checks if suits are not equal
+	if cardOne.CardSuit != cardTwo.CardSuit {
+		if cardOne.CardSuit < cardTwo.CardSuit {
+			return 1
+		} else {
+			return -1
+		}
+	}
+	return -10
 }
 
 func main() {
-	fmt.Print(compareCards())
+	var cardOne = Card{CardSuit: 7, CardVal: 1}
+	var cardTwo = Card{CardSuit: 7, CardVal: 2}
+
+	fmt.Print(compareCards(cardOne, cardTwo))
 }
