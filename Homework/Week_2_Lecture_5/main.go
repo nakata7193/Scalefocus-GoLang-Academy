@@ -58,9 +58,31 @@ func compareCards(cardOne Card, cardTwo Card) int {
 	return -10
 }
 
-func main() {
-	var cardOne = Card{CardSuit: 7, CardVal: 1}
-	var cardTwo = Card{CardSuit: 7, CardVal: 2}
+// func maxCard(cards []Card) Card {
+// 	cardOne := Card{CardSuit: 7, CardVal: 1}
+// 	cardTwo := Card{CardSuit: 7, CardVal: 2}
+// 	cardThree := Card{CardSuit: 9, CardVal: 3}
+// 	cardFour := Card{CardSuit: 10, CardVal: 4}
 
+// 	card := []Card{}
+// 	cards = append(cards, cardOne)
+// 	cards = append(cards, cardTwo)
+// 	cards = append(cards, cardThree)
+// 	cards = append(cards, cardFour)
+
+
+// 	for i := 0; i < len(card); i++ {
+// 	if	compareCards(card[i], card[i+1]) == -1{
+// 		break
+// 	}
+// 	}
+	
+// }
+
+func main() {
+	cardOne := Card{CardSuit: 7, CardVal: 1}
+	cardTwo := Card{CardSuit: 7, CardVal: 2}
+	// cardThree := Card{CardSuit: 9, CardVal: 3}
+	// cardFour := Card{CardSuit: 10, CardVal: 4}
 	fmt.Print(compareCards(cardOne, cardTwo))
 }
