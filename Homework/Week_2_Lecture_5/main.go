@@ -87,5 +87,5 @@ func main() {
 	cards = append(cards, cardFour)
 
 	fmt.Print(compareCards(cardOne, cardTwo))
-	MaxCard(cards)
+	fmt.Print(MaxCard(cards))
 }
