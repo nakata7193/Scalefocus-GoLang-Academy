@@ -58,31 +58,34 @@ func compareCards(cardOne Card, cardTwo Card) int {
 	return -10
 }
 
-// func maxCard(cards []Card) Card {
-// 	cardOne := Card{CardSuit: 7, CardVal: 1}
-// 	cardTwo := Card{CardSuit: 7, CardVal: 2}
-// 	cardThree := Card{CardSuit: 9, CardVal: 3}
-// 	cardFour := Card{CardSuit: 10, CardVal: 4}
+func maxCard(cards []Card) Card {
 
-// 	card := []Card{}
-// 	cards = append(cards, cardOne)
-// 	cards = append(cards, cardTwo)
-// 	cards = append(cards, cardThree)
-// 	cards = append(cards, cardFour)
+	var MaxCard Card
 
-
-// 	for i := 0; i < len(card); i++ {
-// 	if	compareCards(card[i], card[i+1]) == -1{
-// 		break
-// 	}
-// 	}
-	
-// }
+	for i := 0; i < len(cards); i++ {
+		if compareCards(cards[i], cards[i+1]) == -1 {
+			MaxCard = cards[i+1]
+		} else if compareCards(cards[i], cards[i+1]) == 1 {
+			MaxCard = cards[i]
+		} else {
+			MaxCard = cards[i]
+		}
+	}
+	return MaxCard
+}
 
 func main() {
 	cardOne := Card{CardSuit: 7, CardVal: 1}
 	cardTwo := Card{CardSuit: 7, CardVal: 2}
-	// cardThree := Card{CardSuit: 9, CardVal: 3}
-	// cardFour := Card{CardSuit: 10, CardVal: 4}
+	cardThree := Card{CardSuit: 9, CardVal: 3}
+	cardFour := Card{CardSuit: 10, CardVal: 4}
+
+	cards := []Card{}
+	cards = append(cards, cardOne)
+	cards = append(cards, cardTwo)
+	cards = append(cards, cardThree)
+	cards = append(cards, cardFour)
+
 	fmt.Print(compareCards(cardOne, cardTwo))
+	MaxCard(cards)
 }
