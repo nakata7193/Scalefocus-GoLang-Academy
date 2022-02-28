@@ -27,7 +27,7 @@ func add(list *MagicList, value int) {
 
 // func toSlice(list *MagicList) []int {
 // 	var numbers []int
-// 	for 
+// 	for
 // 	return append(numbers, list.LastItem.Value)
 // }
 
