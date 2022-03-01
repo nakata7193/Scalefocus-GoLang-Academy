@@ -3,38 +3,52 @@ package main
 import "fmt"
 
 type Item struct {
-	Value    int
-	PrevItem *Item
+	value    int
+	prevItem *Item
 }
 
 type MagicList struct {
-	LastItem *Item
+	lastItem *Item
 }
 
 func add(list *MagicList, value int) {
 	i := Item{
-		Value: value,
+		value: value,
 	}
 
-	if list.LastItem == nil {
-		list.LastItem = &i
-		i.PrevItem = nil
+	if list.lastItem == nil {
+		list.lastItem = &i
 	} else {
-		i.PrevItem = list.LastItem
-		list.LastItem = &i
+		i.prevItem = list.lastItem
+		list.lastItem = &i
 	}
 }
 
-// func toSlice(list *MagicList) []int {
-// 	var numbers []int
-// 	for
-// 	return append(numbers, list.LastItem.Value)
-// }
+func toSlice(list *MagicList) []int {
+	item := list.lastItem
+	var itemList []int
+	for true {
+		if item != nil {
+			itemList = append(itemList, item.value)
+			item = item.prevItem
+		} else {
+			break
+		}
+	}
+	return itemList
+}
 
 func main() {
 	magicList := &MagicList{}
 	add(magicList, 12)
 	add(magicList, 44)
 	add(magicList, 33)
-	fmt.Println(toSlice(magicList))
+	add(magicList, 14)
+	add(magicList, 56)
+	add(magicList, 78)
+	add(magicList, 43)
+	add(magicList, 15)
+	add(magicList, 61)
+	add(magicList, 71)
+	fmt.Print(toSlice(magicList))
 }
