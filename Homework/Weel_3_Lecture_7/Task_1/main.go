@@ -13,7 +13,7 @@ type Card struct {
 
 type Deck struct {
 	Cards []Card
-	size int //just for Deal() test
+	size  int //just for Deal() test
 }
 
 func (deck *Deck) MakeDeck() *Deck {
@@ -46,7 +46,7 @@ func main() {
 	deck := &Deck{}
 	deck.MakeDeck()
 	deck.Shuffle()
-	fmt.Println(deck.size)//52
+	fmt.Println(deck.size) //52
 	deck.Deal()
-	fmt.Println(deck.size)//51
+	fmt.Println(deck.size) //51
 }
