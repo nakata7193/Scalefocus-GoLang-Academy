@@ -36,9 +36,14 @@ func (deck *Deck) Shuffle() *Deck {
 }
 
 func (deck *Deck) Deal() (card *Card) {
-	card = &deck.Cards[0]
+	if deck.size == 0{
+		return nil
+	} else{
+		card = &deck.Cards[0]
 	deck.Cards = deck.Cards[1:]
 	deck.size--
+	}
+
 	return card
 }
 
@@ -47,6 +52,6 @@ func main() {
 	deck.MakeDeck()
 	deck.Shuffle()
 	fmt.Println(deck.size) //52
-	deck.Deal()
+	fmt.Print(deck.Deal())
 	fmt.Println(deck.size) //51
 }
