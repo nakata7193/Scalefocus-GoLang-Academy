@@ -26,7 +26,7 @@ type cardSuit = int
 
 const (
 	club cardSuit = iota + 1
-	diamond
+	diamond	
 	heart
 	spade
 )
@@ -58,25 +58,25 @@ func compareCards(cardOne Card, cardTwo Card) int {
 	return -10
 }
 
-func maxCard(cards []Card) Card {
+func MaxCard(cards []Card) Card {
 
-	var MaxCard Card
+	var maxCard Card
 
-	for i := 0; i < len(cards)-1; i++ {
-		if compareCards(cards[i], cards[i+1]) == -1 {
-			MaxCard = cards[i]
-		} else if compareCards(cards[i], cards[i+1]) == 1 {
-			MaxCard = cards[i+1]
+	for i := range cards {
+		if compareCards(maxCard, cards[i]) == 1 {
+			maxCard = cards[i]
+		} else if compareCards(maxCard, cards[i]) == -1 {
+			continue
 		} else {
 			break
 		}
 	}
-	return MaxCard
+	return maxCard
 }
 
 func main() {
 	cardOne := Card{CardSuit: 2, CardVal: 7}
-	cardTwo := Card{CardSuit: 1, CardVal: 7}
+	cardTwo := Card{CardSuit: 4, CardVal: 7}
 	cardThree := Card{CardSuit: 3, CardVal: 3}
 	cardFour := Card{CardSuit: 4, CardVal: 2}
 
@@ -86,6 +86,6 @@ func main() {
 	cards = append(cards, cardThree)
 	cards = append(cards, cardFour)
 
-	fmt.Print(compareCards(cardOne,cardTwo))
-	fmt.Print(maxCard(cards))
+	fmt.Print(compareCards(cardOne, cardTwo))
+	fmt.Print(MaxCard(cards))
 }
