@@ -11,5 +11,4 @@ func main() {
 	deck.MakeDeck()
 	deck.Shuffle()
 	fmt.Print(carddraw.DrawAllCards(deck))
-
 }

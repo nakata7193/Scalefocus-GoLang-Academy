@@ -9,8 +9,12 @@ type dealer interface {
 }
 
 func DrawAllCards(d dealer) (cards []cardgame.Card) {
-	for d.Deal() != nil {
-		cards = append(cards, *d.Deal())
+	for {
+		i := d.Deal()
+		if i != nil {
+			cards = append(cards, *i)
+		} else {
+			return cards
+		}
 	}
-	return cards
 }

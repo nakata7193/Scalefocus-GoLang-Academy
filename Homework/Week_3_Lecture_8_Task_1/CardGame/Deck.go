@@ -25,11 +25,10 @@ func (deck *Deck) Shuffle() *Deck {
 }
 
 func (deck *Deck) Deal() (card *Card) {
-	for deck != nil{
+	if len(deck.cards) > 0 {
 		card = &deck.cards[0]
 		deck.cards = deck.cards[1:]
 		deck.size--
-		return card
 	}
-	return nil
+	return card
 }
