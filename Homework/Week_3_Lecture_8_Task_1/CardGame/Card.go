@@ -7,5 +7,5 @@ type Card struct {
 
 type Deck struct {
 	cards []Card
-	size  int //just for Deal() test
+	size  int  //just for Deal() test
 }

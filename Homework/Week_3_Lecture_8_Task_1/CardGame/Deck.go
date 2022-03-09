@@ -1,5 +1,4 @@
 package cardgame
-
 import (
 	"math/rand"
 	"time"

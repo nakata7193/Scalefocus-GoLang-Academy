@@ -1,5 +1,4 @@
 package carddraw
-
 import (
 	cardgame "github.com/nakata7193/CardGame"
 )

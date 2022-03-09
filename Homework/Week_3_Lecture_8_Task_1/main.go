@@ -1,7 +1,7 @@
 package main
-
 import (
 	"fmt"
+
 	carddraw "github.com/nakata7193/CardDraw"
 	cardgame "github.com/nakata7193/CardGame"
 )
