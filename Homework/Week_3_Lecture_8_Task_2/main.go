@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math"
 )
 
@@ -23,26 +24,28 @@ func (circle *NewCircle) Area() float64 {
 }
 
 type Shape interface {
-	Area()
+	Area() float64
 }
 
 type Shapes []Shape
 
-func (Shapes) largestArea() float64 {
-	var slice []Shape
-	biggestFigure := slice[0]
-	for _,i := range slice {
-		if biggestFigure < i {
-			biggestFigure = float64(i)
+func (shapes Shapes) largestArea() float64 {
+	biggestFigure := shapes[0].Area()
+	for _,i := range shapes {
+		if biggestFigure < float64(i.Area()) {
+			biggestFigure = float64(i.Area())
 		}
 	}
 	return biggestFigure
 }
 
-func main(){
+func main() {
 	square1 := NewSquare{5}
 	square2 := NewSquare{4}
 	circle := NewCircle{8}
 	var slice Shapes
-	slice = append(slice,)
+	slice = append(slice,&square1)
+	slice = append(slice,&square2)
+	slice = append(slice,&circle)
+	fmt.Print(slice.largestArea())
 }
