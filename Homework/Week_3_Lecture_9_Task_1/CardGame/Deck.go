@@ -32,3 +32,11 @@ func (deck *Deck) Deal() (card *Card) {
 	}
 	return card
 }
+
+func (deck *Deck) Done() bool {
+	if len(deck.cards) > 0 {
+		return false
+	} else {
+		return true
+	}
+}

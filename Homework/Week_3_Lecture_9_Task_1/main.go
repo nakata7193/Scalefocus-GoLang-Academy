@@ -10,12 +10,14 @@ import (
 
 func main() {
 	deck := &cardgame.Deck{}
-	drawAllCards, err := carddraw.DrawAllCards(deck)
 	deck.MakeDeck()
 	deck.Shuffle()
+	drawAllCards, err := carddraw.DrawAllCards(deck)
 	if err != nil {
 		log.Fatal(err)
+		return
 	}
+	
 	fmt.Print(drawAllCards)
 
 }
