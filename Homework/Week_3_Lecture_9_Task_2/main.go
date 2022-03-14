@@ -1,29 +1,66 @@
 package main
 
+import (
+	"errors"
+	"fmt"
+	"log"
+)
+
 type Action func() error
 
-type Pipe struct{}
+func SafeExecError(errorFunc Action) Action {
+	errorFunc = func() error {
+		return errors.New("wrapped error")
+	}
 
-func NewPipe() *Pipe {
-	return &Pipe{}
+	defer func() error {
+		if recover := recover(); recover != nil {
+			return fmt.Errorf("safe exec: %w", errorFunc())
+		}
+		return fmt.Errorf("couldn't recover")
+	}()
+	return errorFunc
 }
 
-func SafeExec(a Action) (f Action) {
-
-	return f
+func SafeExecPanic(errorFunc Action) Action {
+	defer func() {
+		if recover := recover(); recover != nil {
+			fmt.Println("recovered successfully")
+		} else {
+			panic("crash")
+		}
+	}()
+	return errorFunc
 }
 
-// func (p *Pipe) Do() error {
-// 	var err error
-// 	return fmt.Errorf("Safe exec: %w",err)
-// }
+func SafeExec(a Action) Action {
+	defer func() error {
+		return nil
+	}()
+	return nil
+}
 
 func main() {
-	pipe := &Pipe{}
+	var errorFunc Action
 
-	err := pipe.SafeExec()
+	// err := SafeExecError(errorFunc)
+	// if err != nil {
+	// 	log.Fatalf("there was an error: %v", err())
+	// } else {
+	// 	fmt.Println("no err")
+	// }
 
-	if err != nil {
-		return err
+	// panicErr := SafeExecPanic(errorFunc)
+	// if panicErr != nil {
+	// 	log.Fatalf("there was an Panic: %v", panicErr())
+	// } else {
+	// 	fmt.Println("no panic")
+	// }
+
+	noErr := SafeExec(errorFunc)
+	if noErr != nil {
+		log.Fatalf("there was no error: %v", noErr())
+	} else {
+		fmt.Println("no err or panic")
 	}
 }
