@@ -32,9 +32,10 @@ func (cp *ConcurrentPrinter) printBar(times int) {
 func main() {
 	times := 10
 	cp := &ConcurrentPrinter{}
-	for i := 0; i <= times; i++ {
+	for i := 0; i < times; i++ {
 		cp.printFoo(i)
 		cp.printBar(i)
 	}
+	cp.printBar(1)
 	cp.WaitGroup.Wait()
 }
