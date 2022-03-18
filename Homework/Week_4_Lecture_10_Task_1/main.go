@@ -3,39 +3,59 @@ package main
 import (
 	"fmt"
 	"sync"
+	"time"
 )
 
 type ConcurrentPrinter struct {
 	sync.WaitGroup
 	sync.Mutex
+	counter     int
+	lastElement string
 }
 
 func (cp *ConcurrentPrinter) printFoo(times int) {
-	cp.WaitGroup.Add(1)
-	defer cp.WaitGroup.Done()
-	cp.Lock()
+	cp.Add(1)
 	go func() {
-		fmt.Print("|foo|")
-		cp.Unlock()
+		defer cp.Done()
+		for {
+			if cp.counter == times {
+				break
+			}
+			cp.Lock()
+			if cp.lastElement != "foo" {
+				fmt.Print("foo")
+				cp.lastElement = "foo"
+				cp.counter++
+			}
+			cp.Unlock()
+			time.Sleep(10 * time.Millisecond)
+		}
 	}()
 }
 func (cp *ConcurrentPrinter) printBar(times int) {
-	cp.WaitGroup.Add(1)
-	defer cp.WaitGroup.Done()
-	cp.Lock()
+	cp.Add(1)
 	go func() {
-		fmt.Print("|bar|")
-		cp.Unlock()
+		defer cp.Done()
+		for {
+			if cp.counter == times {
+				break
+			}
+			cp.Lock()
+			if cp.lastElement != "bar" {
+				fmt.Print("bar")
+				cp.lastElement = "bar"
+				cp.counter++
+			}
+			cp.Unlock()
+			time.Sleep(10 * time.Millisecond)
+		}
 	}()
 }
 
 func main() {
 	times := 10
 	cp := &ConcurrentPrinter{}
-	for i := 0; i < times; i++ {
-		cp.printFoo(i)
-		cp.printBar(i)
-	}
-	cp.printBar(1)
-	cp.WaitGroup.Wait()
+	cp.printFoo(times)
+	cp.printBar(times)
+	cp.Wait()
 }
