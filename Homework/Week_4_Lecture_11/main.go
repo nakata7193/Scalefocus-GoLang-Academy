@@ -5,44 +5,49 @@ import (
 	"sync"
 )
 
-// func processOdd(inputs []int) chan int {
-// 	oddValues := make(chan int, len(inputs))
-// 	var wg sync.WaitGroup
-// 	for _, numbers := range inputs {
-// 		go func(num int) {
-// 			wg.Add(1)
-// 			if num%2 == 0 {
-// 				oddValues <- num
-// 			}
-// 			wg.Done()
-// 		}(numbers)
-// 	}
-// 	wg.Wait()
-// 	close(oddValues)
-// 	return oddValues
-// }
+func processOdd(inputs []int) chan int {
+	oddValues := make(chan int)
+	var wg sync.WaitGroup
+	for _, num := range inputs {
+		wg.Add(1)
+		go func(num int) {
+			defer wg.Done()
+			if num%2 == 0 {
+				oddValues <- num
+			}
+		}(num)
+	}
+	go func() {
+		wg.Wait()
+		close(oddValues)
+	}()
+	return oddValues
+}
 
 func processEven(inputs []int) chan int {
-	evenValues := make(chan int, len(inputs))
+	evenValues := make(chan int)
 	var wg sync.WaitGroup
-	for _, numbers := range inputs {
+	for _, num := range inputs {
+		wg.Add(1)
 		go func(num int) {
-			wg.Add(1)
+			defer wg.Done()
 			if num%2 == 0 {
 				evenValues <- num
 			}
-			wg.Done()
-		}(numbers)
+		}(num)
 	}
-	wg.Wait()
-	close(evenValues)
+	go func() {
+		wg.Wait()
+		close(evenValues)
+	}()
+
 	return evenValues
 }
 
 func main() {
 	inputs := []int{1, 17, 34, 56, 2, 8}
 	evenCH := processEven(inputs)
-	for val := range evenCH {
-		fmt.Print(val)
+	for range inputs {
+		fmt.Println(<-evenCH)
 	}
 }
