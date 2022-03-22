@@ -8,14 +8,14 @@ import (
 func generateThrottled(data string, bufferLimit int, clearInterval time.Duration) <-chan string {
 	channel := make(chan string, bufferLimit)
 	go func() {
+		timeoutChan := time.After(clearInterval)
 		for {
-			timeoutChan := time.After(clearInterval)
 			select {
 			case channel <- data:
-				channel <- data
+
+			default:
 				<-timeoutChan
-			case <-timeoutChan:
-				<-channel
+				timeoutChan = time.After(clearInterval)
 			}
 		}
 	}()
