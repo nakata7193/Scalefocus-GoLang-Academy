@@ -2,14 +2,14 @@ package main
 
 import (
 	"log"
-	"math/rand"
 	"net/http"
 	"sync"
 )
 
 type Metadata struct {
-	URL  string
-	Size int
+	URL     string
+	Message string
+	Error   error
 }
 
 func pingURL(url string) error {
@@ -27,6 +27,7 @@ func pingURL(url string) error {
 }
 
 func fetchURLs(urls []string, concurrency int) chan Metadata {
+
 	processQueue := make(chan string, concurrency)
 	outChan := make(chan Metadata)
 	var wg sync.WaitGroup
@@ -38,9 +39,13 @@ func fetchURLs(urls []string, concurrency int) chan Metadata {
 
 			go func(url string) {
 				defer wg.Done()
-				pingURL(url)
-				<-processQueue
-				outChan <- Metadata{URL: url, Size: rand.Intn(2000)}
+				err := pingURL(url)
+				if err != nil {
+					outChan <- Metadata{Error: err}
+				} else {
+					<-processQueue
+					outChan <- Metadata{URL: url, Message: "ok", Error: nil}
+				}
 			}(urlToProcess)
 		}
 		wg.Wait()
@@ -50,16 +55,19 @@ func fetchURLs(urls []string, concurrency int) chan Metadata {
 }
 
 func main() {
-	urls := []string{
-		"https://www.messenger.com/",
-		"https://www.youtube.com/",
-		"https://app.pluralsight.com/id",
-		"https://hackforums.net/",
-		"https://www.facebook.com/",
-	}
 
-	resultsChan := fetchURLs(urls, 2)
-	for url := range resultsChan {
-		log.Println("Done: ", url)
-	}
+	/*Just import the CLI*/
+
+	// urls := []string{
+	// 	"https://www.messenger.com/",
+	// 	"https://www.youtube.com/",
+	// 	"https://app.pluralsight.com/id",
+	// 	"https://hackforums.net/",
+	// 	"https://www.facebook.com/",
+	// }
+
+	// resultsChan := fetchURLs(urls, 2)
+	// for url := range resultsChan {
+	// 	log.Println("Done: ", url)
+	// }
 }
