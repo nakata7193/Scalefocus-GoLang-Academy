@@ -5,7 +5,6 @@ import (
 	"math/rand"
 	"net/http"
 	"sync"
-	"time"
 )
 
 type Metadata struct {
@@ -26,6 +25,7 @@ func pingURL(url string) error {
 	log.Printf("Got response for %s: %d\n", url, resp.StatusCode)
 	return nil
 }
+
 func fetchURLs(urls []string, concurrency int) chan Metadata {
 	processQueue := make(chan string, concurrency)
 	outChan := make(chan Metadata)
@@ -38,8 +38,7 @@ func fetchURLs(urls []string, concurrency int) chan Metadata {
 
 			go func(url string) {
 				defer wg.Done()
-				time.Sleep(time.Duration(rand.Intn(2000)) * time.Millisecond)
-				log.Println("fetched: ", url)
+				pingURL(url)
 				<-processQueue
 				outChan <- Metadata{URL: url, Size: rand.Intn(2000)}
 			}(urlToProcess)
