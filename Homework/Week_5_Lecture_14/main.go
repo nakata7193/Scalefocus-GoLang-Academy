@@ -1,6 +1,8 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -44,7 +46,11 @@ func fetchURLs(urls []string, concurrency int) chan Metadata {
 					outChan <- Metadata{Error: err}
 				} else {
 					<-processQueue
-					outChan <- Metadata{URL: url, Message: "ok", Error: nil}
+					outChan <- Metadata{
+						URL:     url,
+						Message: "ok",
+						Error:   err,
+					}
 				}
 			}(urlToProcess)
 		}
@@ -55,19 +61,18 @@ func fetchURLs(urls []string, concurrency int) chan Metadata {
 }
 
 func main() {
+	//initialising variables
+	var concurrency int
+	var urls []string
 
-	/*Just import the CLI*/
+	//flag operations
+	flag.IntVar(&concurrency, "c", 2, "Number of concurrent operations")
+	flag.Parse()
+	urls = flag.Args()
 
-	// urls := []string{
-	// 	"https://www.messenger.com/",
-	// 	"https://www.youtube.com/",
-	// 	"https://app.pluralsight.com/id",
-	// 	"https://hackforums.net/",
-	// 	"https://www.facebook.com/",
-	// }
-
-	// resultsChan := fetchURLs(urls, 2)
-	// for url := range resultsChan {
-	// 	log.Println("Done: ", url)
-	// }
+	//printing the result
+	metadataValues := fetchURLs(urls, concurrency)
+	for range metadataValues {
+		fmt.Println(metadataValues)
+	}
 }
