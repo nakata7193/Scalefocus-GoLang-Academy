@@ -9,30 +9,25 @@ import (
 type BufferedContext struct {
 	ctx    context.Context
 	cancel context.CancelFunc
-	timeout time.Duration
-	buffersize int
 }
 
 func NewBufferedContext(timeout time.Duration, bufferSize int) *BufferedContext {
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
-	return &BufferedContext{ctx: ctx, cancel: cancel,timeout: timeout,buffersize: bufferSize}
+	return &BufferedContext{ctx: ctx, cancel: cancel}
 }
 
 func (bc *BufferedContext) Done() <-chan struct{} {
-	done := make(chan BufferedContext)
-	select{
-	case<-bc.timeout:
-		
-	}
-}
+	done := make(chan struct{})
+	return done
+	/* This function will serve in place of the oriignal context */
+	/*
+		make it so that the result channel gets closed in one of the to cases;
+		a) the emebdded context times out
+		b) the buffer gets filled
+	*/
 
-/* This function will serve in place of the oriignal context */
-/*
-	make it so that the result channel gets closed in one of the to cases;
-	a) the emebdded context times out
-	b) the buffer gets filled
-*/
+}
 
 func (bc *BufferedContext) Run(fn func(context.Context, chan string)) {
 	/* This function serves for executing the test */
