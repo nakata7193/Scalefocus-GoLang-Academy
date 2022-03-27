@@ -10,16 +10,15 @@ func CompareCards(cardOne Card, cardTwo Card) int {
 		} else {
 			return -1
 		}
-	}
-	//checks if suits are not equal
-	if cardOne.CardSuit != cardTwo.CardSuit {
+	} else if cardOne.CardSuit != cardTwo.CardSuit {
 		if cardOne.CardSuit < cardTwo.CardSuit {
 			return 1
 		} else {
 			return -1
 		}
+	} else {
+		return -10
 	}
-	return -10
 }
 
 func MaxCard(cards []Card) Card {
