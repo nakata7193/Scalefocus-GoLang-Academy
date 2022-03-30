@@ -6,13 +6,12 @@ import (
 )
 
 func generateThrottled(data string, bufferLimit int, clearInterval time.Duration) <-chan string {
-	channel := make(chan string, bufferLimit)
+	channel := make(chan string, bufferLimit-1)
 	go func() {
 		timeoutChan := time.After(clearInterval)
 		for {
 			select {
 			case channel <- data:
-
 			default:
 				<-timeoutChan
 				timeoutChan = time.After(clearInterval)
@@ -21,7 +20,6 @@ func generateThrottled(data string, bufferLimit int, clearInterval time.Duration
 	}()
 	return channel
 }
-
 func main() {
 	out := generateThrottled("foo", 2, time.Second)
 	for f := range out {
