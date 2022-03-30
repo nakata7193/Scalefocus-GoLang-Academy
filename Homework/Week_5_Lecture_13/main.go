@@ -7,31 +7,27 @@ import (
 )
 
 type BufferedContext struct {
-	ctx    context.Context
-	cancel context.CancelFunc
+	context.Context
+	buffer chan string
+	context.CancelFunc
 }
 
 func NewBufferedContext(timeout time.Duration, bufferSize int) *BufferedContext {
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
-	defer cancel()
-	return &BufferedContext{ctx: ctx, cancel: cancel}
+	buffer := make(chan string, bufferSize)
+	newBufferCTX := &BufferedContext{Context: ctx, buffer: buffer, CancelFunc: cancel}
+	return newBufferCTX
 }
 
 func (bc *BufferedContext) Done() <-chan struct{} {
-	done := make(chan struct{})
-	return done
-	/* This function will serve in place of the oriignal context */
-	/*
-		make it so that the result channel gets closed in one of the to cases;
-		a) the emebdded context times out
-		b) the buffer gets filled
-	*/
-
+	if len(bc.buffer) == cap(bc.buffer) {
+		bc.CancelFunc()
+	}
+	return bc.Context.Done()
 }
 
 func (bc *BufferedContext) Run(fn func(context.Context, chan string)) {
-	/* This function serves for executing the test */
-	/* Implement the rest */
+	fn(bc, bc.buffer)
 }
 
 func main() {
@@ -42,7 +38,7 @@ func main() {
 			case <-ctx.Done():
 				return
 			case buffer <- "bar":
-				time.Sleep(time.Millisecond * 200) // try different values here
+				time.Sleep(time.Millisecond * 1) // try different values here
 				fmt.Println("bar")
 			}
 		}
