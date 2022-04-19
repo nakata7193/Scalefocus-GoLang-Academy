@@ -39,7 +39,7 @@ func Top10Stories() []string {
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		log.Fatal(err)
-	} 
+	}
 	var IDs []int
 	json.NewDecoder(resp.Body).Decode(&IDs)
 	IDs = IDs[:10]
