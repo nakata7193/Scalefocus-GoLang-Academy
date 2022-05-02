@@ -37,7 +37,7 @@ func TestTopStoriesIDs(t *testing.T) {
 
 	//Act
 	scraper := NewNewsScraper(mockServer.URL)
-	got := scraper.Top10Stories()
+	got := scraper.getTopStoriesIDs(10)
 	want := ids[:10]
 
 	//Assert
@@ -48,29 +48,22 @@ func TestTopStoriesIDs(t *testing.T) {
 
 func TestTopStories(t *testing.T) {
 
-	ids := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}
+	ids := []int{1}
 
 	router := http.NewServeMux()
 	stories := []TopStory{
-		{ID: 1, Title: "title1", Score: 1},
-		{ID: 2, Title: "title2", Score: 2},
-		{ID: 3, Title: "title3", Score: 3},
-		{ID: 4, Title: "title4", Score: 4},
-		{ID: 5, Title: "title5", Score: 5},
-		{ID: 6, Title: "title6", Score: 6},
-		{ID: 7, Title: "title7", Score: 7},
-		{ID: 8, Title: "title8", Score: 8},
-		{ID: 9, Title: "title9", Score: 9},
-		{ID: 10, Title: "title10", Score: 10},
-		{ID: 11, Title: "title11", Score: 11},
+		{
+			Title: "title1",
+			Score: 10,
+		},
 	}
-
+	router.Handle("/v0/topstories.json", handleTopStoriesIDs(ids))
 	router.Handle("/v0/item/", handleTopStories(stories))
 	mockServer := httptest.NewServer(router)
 
 	//Act
 	scraper := NewNewsScraper(mockServer.URL)
-	got := scraper.GetTopStories(ids)
+	got := scraper.GetTopStories(1)
 	want := stories
 
 	//Assert

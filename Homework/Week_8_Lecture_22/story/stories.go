@@ -26,7 +26,7 @@ func NewNewsScraper(url string) *NewsScraper {
 	return &NewsScraper{url: url}
 }
 
-func (n *NewsScraper) Top10Stories() []int {
+func (n *NewsScraper) getTopStoriesIDs(maxCount int) []int {
 	req, err := http.NewRequest("GET", n.url+"/v0/topstories.json", nil)
 	if err != nil {
 		log.Fatal(err)
@@ -37,17 +37,18 @@ func (n *NewsScraper) Top10Stories() []int {
 	}
 	var IDs []int
 	json.NewDecoder(resp.Body).Decode(&IDs)
-	IDs = IDs[:10]
-	return IDs
+
+	return IDs[:maxCount]
 }
 
-func (n *NewsScraper) GetTopStories(IDs []int) []TopStory {
+func (n *NewsScraper) GetTopStories(maxCount int) []TopStory {
+	IDs := n.getTopStoriesIDs(maxCount)
 	req, err := http.NewRequest("GET", n.url, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	for _, id := range n.Top10Stories() {
+	for _, id := range IDs {
 		req.URL.Path = "/v0/item/" + fmt.Sprint(id) + ".json"
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
