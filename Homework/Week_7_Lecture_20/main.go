@@ -67,3 +67,4 @@ func main() {
 		fmt.Scanln(&input)
 	}
 }
+
