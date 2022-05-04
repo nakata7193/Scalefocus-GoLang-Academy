@@ -20,10 +20,15 @@ type TopStoriesPayload struct {
 type NewsScraper struct {
 	url  string
 	Data []TopStory
+	repo Repository
 }
 
-func NewNewsScraper(url string) *NewsScraper {
-	return &NewsScraper{url: url}
+func NewNewsScraper(url string,repo Repository) *NewsScraper {
+	return &NewsScraper{url: url,repo: repo}
+}
+
+type Repository interface {
+	SaveStories(stories []TopStory)
 }
 
 func (n *NewsScraper) getTopStoriesIDs(maxCount int) []int {
@@ -58,5 +63,6 @@ func (n *NewsScraper) GetTopStories(maxCount int) []TopStory {
 		json.NewDecoder(resp.Body).Decode(&topStory)
 		n.Data = append(n.Data, topStory)
 	}
+	n.repo.SaveStories(n.Data)
 	return n.Data
 }

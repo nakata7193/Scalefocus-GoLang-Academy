@@ -28,6 +28,14 @@ func handleTopStories(Stories []TopStory) http.HandlerFunc {
 	}
 }
 
+type FakeStorage struct {
+	savedStories []TopStory
+}
+
+func (fstorage *FakeStorage) SaveStories(stories []TopStory) {
+	fstorage.savedStories = stories
+}
+
 func TestTopStoriesIDs(t *testing.T) {
 	router := http.NewServeMux()
 	ids := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}
@@ -36,7 +44,7 @@ func TestTopStoriesIDs(t *testing.T) {
 	mockServer := httptest.NewServer(router)
 
 	//Act
-	scraper := NewNewsScraper(mockServer.URL)
+	scraper := NewNewsScraper(mockServer.URL, &FakeStorage{})
 	got := scraper.getTopStoriesIDs(10)
 	want := ids[:10]
 
@@ -62,7 +70,8 @@ func TestTopStories(t *testing.T) {
 	mockServer := httptest.NewServer(router)
 
 	//Act
-	scraper := NewNewsScraper(mockServer.URL)
+	fs := &FakeStorage{}
+	scraper := NewNewsScraper(mockServer.URL, fs)
 	got := scraper.GetTopStories(1)
 	want := stories
 
@@ -70,4 +79,8 @@ func TestTopStories(t *testing.T) {
 	if !reflect.DeepEqual(got, want) {
 		t.Fatalf("got %v want %v", got, want)
 	}
+	if !reflect.DeepEqual(got, fs.savedStories) {
+		t.Fatalf("got %v want %v", got, want)
+	}
+
 }
