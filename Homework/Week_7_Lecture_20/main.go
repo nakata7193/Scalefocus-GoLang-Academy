@@ -18,18 +18,17 @@ type DrinksResponsePayload struct {
 }
 
 type coctailBartender struct {
-	Data  DrinkInstructions
-	url   string
-	input string
+	Data DrinkInstructions
+	url  string
 }
 
-func NewCoctailBartender(url string, input string) coctailBartender {
+func NewCoctailBartender(url string) coctailBartender {
 	//check if url is valid
-	return coctailBartender{url: url, input: input}
+	return coctailBartender{url: url}
 }
 
-func (c *coctailBartender) Start() (DrinksResponsePayload, error) {
-	scrapeUrl := c.url + "?s=" + c.input
+func (c *coctailBartender) bartender(input string) (DrinksResponsePayload, error) {
+	scrapeUrl := c.url + "?s=" + input
 	req, err := http.NewRequest("GET", scrapeUrl, nil)
 	if err != nil {
 		log.Fatal(err)
@@ -54,17 +53,24 @@ func (c *coctailBartender) Start() (DrinksResponsePayload, error) {
 	return payload, nil
 }
 
-func main() {
-	//get user input and pass it to the coctail bartender
-	var input string
-	fmt.Println("Enter the name of the drink you want to know the instructions for:")
-	fmt.Scanln(&input)
-	c := NewCoctailBartender("https://www.thecocktaildb.com/api/json/v1/1/search.php", input)
+func (c *coctailBartender) Start() {
+	//start the coctail bartender
+	input := ""
+	
 	for input != "nothing" {
-		coctailBartender := NewCoctailBartender(c.url, c.input)
-		coctailBartender.Start()
-		fmt.Println(coctailBartender.Data)
+		fmt.Println("Enter the name of the drink you want to know the instructions for:")
 		fmt.Scanln(&input)
+		payload, err := c.bartender(input)
+		if err != nil {
+			fmt.Println("Drink not found")
+		}
+		fmt.Println(payload)
 	}
 }
 
+func main() {
+	//get user input and pass it to the coctail bartender
+	c := NewCoctailBartender("https://www.thecocktaildb.com/api/json/v1/1/search.php")
+	c.Start()
+
+}
