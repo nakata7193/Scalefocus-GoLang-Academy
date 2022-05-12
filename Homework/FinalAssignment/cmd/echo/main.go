@@ -19,9 +19,11 @@ func main() {
 	})
 
 	// Add your handler (API endpoint) registrations here
-	router.GET("/api", func(ctx echo.Context) error {
+	router.GET("/api/lists/", func(ctx echo.Context) error {
 		return ctx.JSON(200, "Hello, World!")
 	})
+
+	//hit the endpoint http://localhost:3000/api/lists
 
 	// Do not touch this line!
 	log.Fatal(http.ListenAndServe(":3000", cmd.CreateCommonMux(router)))
