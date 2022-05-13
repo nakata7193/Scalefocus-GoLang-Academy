@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	_ "modernc.org/sqlite"
 )
 
 func main() {

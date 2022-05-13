@@ -1,6 +1,10 @@
-package repository
+package model
 
-import "database/sql"
+import (
+	"database/sql"
+
+	_ "modernc.org/sqlite"
+)
 
 type Repository struct {
 	db *sql.DB
@@ -10,10 +14,9 @@ func NewRepository(db *sql.DB) *Repository {
 	return &Repository{db: db}
 }
 
-//get all tasks from a list
 func (r *Repository) GetTasks(ListID int) ([]Task, error) {
 	query := "SELECT txt, completed from Tasks WHERE list_id = ?"
-	rows, err := r.db.Query(query, id)
+	rows, err := r.db.Query(query, ListID)
 	if err != nil {
 		return nil, err
 	}
