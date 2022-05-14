@@ -1,7 +1,9 @@
 package main
 
 import (
+	"database/sql"
 	"final/cmd"
+	"final/cmd/controllers"
 	"log"
 	"net/http"
 
@@ -9,8 +11,11 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-func main() {
+type Repository struct {
+	db *sql.DB
+}
 
+func main() {
 	router := gin.Default()
 
 	router.Use(func(ctx *gin.Context) {
@@ -19,58 +24,26 @@ func main() {
 		ctx.Next()
 	})
 
-	//Tasks
 	//GET /api/lists/:id/tasks
-	router.GET("/api/lists/:id/tasks", func(ctx *gin.Context) {
-		ctx.JSON(200, gin.H{
-			"message": "Successful",
-		})
-	})
+	router.GET("/api/lists/:id/tasks", controllers.GetTasks())
 
 	//POST /api/lists/:id/tasks
-	router.POST("/api/lists/:id/tasks", func(ctx *gin.Context) {
-		ctx.JSON(200, gin.H{
-			"text": "string",
-		})
-	})
+	router.POST("/api/lists/:id/tasks", controllers.CreateTask())
 
 	//PATCH /tasks/:id
-	router.PATCH("/api/tasks/:id", func(ctx *gin.Context) {
-		ctx.JSON(200, gin.H{
-			"completed": true,
-		})
-	})
+	router.PATCH("/api/tasks/:id", controllers.ToggleTask())
 
 	//DELETE /tasks/:id
+	router.DELETE("/api/tasks/:id", controllers.DeleteTask())
 
-	router.DELETE("/api/tasks/:id", func(ctx *gin.Context) {
-		ctx.JSON(200, gin.H{
-			"id": 0,
-		})
-	})
-
-	// Lists
 	// GET /api/lists/
-	router.GET("/api/lists", func(ctx *gin.Context) {
-		ctx.JSON(200, gin.H{
-			"message": "Successful",
-		})
-	})
+	router.GET("/api/lists", controllers.GetLists())
 
 	//POST /api/lists/
-	router.POST("/api/lists", func(ctx *gin.Context) {
-		ctx.JSON(200, gin.H{
-			"id":   0,
-			"name": "string",
-		})
-	})
+	router.POST("/api/lists", controllers.CreateList())
 
 	//DELETE /api/lists/:id
-	router.DELETE("/api/lists/:id", func(ctx *gin.Context) {
-		ctx.JSON(200, gin.H{
-			"id": 0,
-		})
-	})
+	router.DELETE("/api/lists/:id", controllers.DeleteList())
 
 	// Do not touch this line!
 	log.Fatal(http.ListenAndServe(":3000", cmd.CreateCommonMux(router)))

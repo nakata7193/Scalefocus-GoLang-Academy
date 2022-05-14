@@ -44,16 +44,16 @@ func (r *Repository) CreateTask(text string, listID int) (Task, error) {
 	return task, nil
 }
 
-func (r *Repository) ToggleTask(listID int, taskID int) (Task, error) {
+func (r *Repository) ToggleTask(taskID int) (Task, error) {
 	var task Task
-	query := "UPDATE Tasks SET completed = NOT completed WHERE (list_id = ? AND id = ?)"
-	_, err := r.db.Exec(query, listID, taskID)
+	query := "UPDATE Tasks SET completed = NOT completed WHERE id = ?)"
+	_, err := r.db.Exec(query, taskID)
 	if err != nil {
 		return task, err
 	}
 
-	query = "SELECT id, txt, completed FROM Tasks WHERE (list_id = ? AND id = ?)"
-	err = r.db.QueryRow(query, listID, taskID).Scan(&task.ID, &task.Text, &listID, &task.Completed)
+	query = "SELECT id, txt, completed FROM Tasks WHERE id = ?)"
+	err = r.db.QueryRow(query, taskID).Scan(&task.ID, &task.Text, &task.ListID, &task.Completed)
 	if err != nil {
 		return task, err
 	}
@@ -61,8 +61,8 @@ func (r *Repository) ToggleTask(listID int, taskID int) (Task, error) {
 	return task, nil
 }
 
-func (r *Repository) DeleteTask(listID int, taskID int) error {
-	_, err := r.db.Exec("DELETE FROM Tasks WHERE (list_id = ? AND id = ?)", listID, taskID)
+func (r *Repository) DeleteTask(taskID int) error {
+	_, err := r.db.Exec("DELETE FROM Tasks WHERE id = ?)", taskID)
 	if err != nil {
 		return err
 	}
