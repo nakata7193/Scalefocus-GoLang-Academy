@@ -6,8 +6,14 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+type Repository *model.Repository
 
-func GetLists() gin.HandlerFunc {
+type listRequest struct {
+	Name string `json:"name"`
+	ID  int    `json:"id"`
+}
+
+func GetLists(Repository) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		db := c.MustGet("db").(*sql.DB)
 		lists, err := model.NewRepository(db).GetLists()
@@ -21,7 +27,7 @@ func GetLists() gin.HandlerFunc {
 	}
 }
 
-func CreateList() gin.HandlerFunc {
+func CreateList(Repository) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		db := c.MustGet("db").(*sql.DB)
 		var list model.List
@@ -37,7 +43,7 @@ func CreateList() gin.HandlerFunc {
 	}
 }
 
-func DeleteList() gin.HandlerFunc {
+func DeleteList(Repository) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		db := c.MustGet("db").(*sql.DB)
 		var list model.List

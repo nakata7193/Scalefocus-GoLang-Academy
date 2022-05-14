@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"final/cmd"
 	"final/cmd/controllers"
+	"final/cmd/model"
 	"log"
 	"net/http"
 
@@ -16,6 +17,8 @@ type Repository struct {
 }
 
 func main() {
+	repository := model.DbInit()
+	
 	router := gin.Default()
 
 	router.Use(func(ctx *gin.Context) {
@@ -25,25 +28,25 @@ func main() {
 	})
 
 	//GET /api/lists/:id/tasks
-	router.GET("/api/lists/:id/tasks", controllers.GetTasks())
+	router.GET("/api/lists/:id/tasks", controllers.GetTasks(repository))
 
 	//POST /api/lists/:id/tasks
-	router.POST("/api/lists/:id/tasks", controllers.CreateTask())
+	router.POST("/api/lists/:id/tasks", controllers.CreateTask(repository))
 
 	//PATCH /tasks/:id
-	router.PATCH("/api/tasks/:id", controllers.ToggleTask())
+	router.PATCH("/api/tasks/:id", controllers.ToggleTask(repository))
 
 	//DELETE /tasks/:id
-	router.DELETE("/api/tasks/:id", controllers.DeleteTask())
+	router.DELETE("/api/tasks/:id", controllers.DeleteTask(repository))
 
 	// GET /api/lists/
-	router.GET("/api/lists", controllers.GetLists())
+	router.GET("/api/lists", controllers.GetLists(repository))
 
 	//POST /api/lists/
-	router.POST("/api/lists", controllers.CreateList())
+	router.POST("/api/lists", controllers.CreateList(repository))
 
 	//DELETE /api/lists/:id
-	router.DELETE("/api/lists/:id", controllers.DeleteList())
+	router.DELETE("/api/lists/:id", controllers.DeleteList(repository))
 
 	// Do not touch this line!
 	log.Fatal(http.ListenAndServe(":3000", cmd.CreateCommonMux(router)))

@@ -15,7 +15,7 @@ type Task interface {
 	DeleteTask(taskID int) error
 }
 
-func GetTasks() gin.HandlerFunc {
+func GetTasks(Repository) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		db := c.MustGet("db").(*sql.DB)
 		var list model.List
@@ -28,7 +28,7 @@ func GetTasks() gin.HandlerFunc {
 	}
 }
 
-func CreateTask() gin.HandlerFunc {
+func CreateTask(Repository) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		db := c.MustGet("db").(*sql.DB)
 		var list model.List
@@ -50,7 +50,7 @@ func CreateTask() gin.HandlerFunc {
 }
 
 //TODO: implement toggle task
-func ToggleTask() gin.HandlerFunc {
+func ToggleTask(Repository) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		db := c.MustGet("db").(*sql.DB)
 		var task model.Task
@@ -68,7 +68,7 @@ func ToggleTask() gin.HandlerFunc {
 	}
 }
 
-func DeleteTask() gin.HandlerFunc {
+func DeleteTask(Repository) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		db := c.MustGet("db").(*sql.DB)
 		var task model.Task
