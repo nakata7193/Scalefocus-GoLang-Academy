@@ -57,17 +57,14 @@ func (r *Repository) CreateTask(task Task, list List) (Task, error) {
 }
 
 func (r *Repository) ToggleTask(task Task) (Task, error) {
-	query := "UPDATE Tasks SET completed = NOT completed WHERE id = ?)"
+	query := "UPDATE Tasks SET completed = NOT completed WHERE id = (?)"
 	_, err := r.db.Exec(query, task.ID)
 	if err != nil {
 		return task, err
 	}
 
-	query = "SELECT id, txt, completed FROM Tasks WHERE id = ?)"
-	err = r.db.QueryRow(query, task.ID).Scan(&task.ID, &task.Text, &task.ListID, &task.Completed)
-	if err != nil {
-		return task, err
-	}
+	query = "SELECT id, txt, completed FROM Tasks WHERE id = (?)"
+	resultTask := r.db.Query(task.ID).Scan(&task.ID, &task.Text, &task.ListID, &task.Completed)
 
 	return task, nil
 }
