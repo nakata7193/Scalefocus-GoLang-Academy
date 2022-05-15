@@ -8,10 +8,8 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-type FakeStorage struct {
-}
-
 const (
+	PragmaMeta      = "PRAGMA foreign_keys = ON"
 	CreateListTable = "CREATE TABLE IF NOT EXISTS Lists(id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT)"
 	CreateTaskTable = "CREATE TABLE IF NOT EXISTS Tasks(id INTEGER PRIMARY KEY AUTOINCREMENT,txt TEXT,list_id INTEGER,completed BOOLEAN NOT NULL DEFAULT 0,FOREIGN KEY (list_id) REFERENCES Lists(id) ON DELETE CASCADE)"
 
@@ -35,6 +33,11 @@ func mockDbRepo() *Repository {
 	}
 
 	_, err = mockDB.Exec(CreateTaskTable)
+	if err != nil {
+		panic(err)
+	}
+
+	_, err = mockDB.Exec(PragmaMeta)
 	if err != nil {
 		panic(err)
 	}
@@ -76,8 +79,10 @@ func TestCreateList(t *testing.T) {
 
 func TestDeleteList(t *testing.T) {
 	repo := mockDbRepo()
+
 	list := List{Name: "Test List"}
-	repo.CreateList(list)
+	repo.db.Exec(CreateList, list.Name)
+
 	repo.DeleteList(list)
 	lists, err := repo.GetLists()
 	if err != nil {

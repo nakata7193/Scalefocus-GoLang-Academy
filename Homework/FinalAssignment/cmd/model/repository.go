@@ -28,16 +28,16 @@ func NewRepository(db *sql.DB) *Repository {
 }
 
 func (r *Repository) GetTasks(list List) ([]Task, error) {
-	query := "SELECT txt, completed from Tasks WHERE list_id = ?"
+	tasks := []Task{}
+	query := "SELECT * from Tasks WHERE list_id = (?)"
 	rows, err := r.db.Query(query, list.ID)
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
-	tasks := []Task{}
+
 	for rows.Next() {
 		var task Task
-		err := rows.Scan(&task.Text, &task.Completed)
+		err := rows.Scan(&task.ID, &task.Text, &task.ListID, &task.Completed)
 		if err != nil {
 			return nil, err
 		}
@@ -108,7 +108,7 @@ func (r *Repository) CreateList(list List) (List, error) {
 }
 
 func (r *Repository) DeleteList(list List) error {
-	_, err := r.db.Exec("DELETE FROM Lists WHERE id = ?", list.ID)
+	_, err := r.db.Exec("DELETE FROM Lists WHERE id = (?)", list.ID)
 	if err != nil {
 		return err
 	}
