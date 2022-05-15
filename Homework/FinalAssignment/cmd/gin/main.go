@@ -1,10 +1,9 @@
 package main
 
 import (
-	"database/sql"
 	"final/cmd"
 	"final/cmd/controllers"
-	"final/cmd/model"
+	"final/cmd/utils"
 	"log"
 	"net/http"
 
@@ -12,13 +11,9 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-type Repository struct {
-	db *sql.DB
-}
-
 func main() {
-	repository := model.DbInit()
-	
+	repository := utils.DbInit()
+
 	router := gin.Default()
 
 	router.Use(func(ctx *gin.Context) {

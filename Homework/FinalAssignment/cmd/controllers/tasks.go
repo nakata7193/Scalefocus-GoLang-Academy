@@ -1,41 +1,31 @@
 package controllers
 
 import (
-	"database/sql"
 	"final/cmd/model"
 
 	"github.com/gin-gonic/gin"
+	_ "modernc.org/sqlite"
 )
 
-// tasks interface
-type Task interface {
-	GetTasks(listID int) ([]model.Task, error)
-	CreateTask(listID int, taskName string) (model.Task, error)
-	ToggleTask(taskID int) (model.Task, error)
-	DeleteTask(taskID int) error
-}
-
-func GetTasks(Repository) gin.HandlerFunc {
+func GetTasks(data model.TaskOperations) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		db := c.MustGet("db").(*sql.DB)
 		var list model.List
 		c.BindJSON(&list)
-		taskList, err := model.NewRepository(db).GetTasks(list.ID)
+		tasks, err := data.GetTasks(list)
 		if err != nil {
 			return
 		}
-		c.JSON(200, taskList)
+		c.JSON(200, tasks)
 	}
 }
 
-func CreateTask(Repository) gin.HandlerFunc {
+func CreateTask(data model.TaskOperations) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		db := c.MustGet("db").(*sql.DB)
 		var list model.List
 		var task model.Task
 		c.BindJSON(&list)
 		c.BindJSON(&task)
-		task, err := model.NewRepository(db).CreateTask(task.Text, list.ID)
+		task, err := data.CreateTask(task, list)
 
 		if err != nil {
 			return
@@ -49,13 +39,11 @@ func CreateTask(Repository) gin.HandlerFunc {
 	}
 }
 
-//TODO: implement toggle task
-func ToggleTask(Repository) gin.HandlerFunc {
+func ToggleTask(data model.TaskOperations) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		db := c.MustGet("db").(*sql.DB)
 		var task model.Task
 		c.BindJSON(&task)
-		task, err := model.NewRepository(db).ToggleTask(task.ID)
+		task, err := data.ToggleTask(task)
 		if err != nil {
 			return
 		}
@@ -68,15 +56,13 @@ func ToggleTask(Repository) gin.HandlerFunc {
 	}
 }
 
-func DeleteTask(Repository) gin.HandlerFunc {
+func DeleteTask(data model.TaskOperations) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		db := c.MustGet("db").(*sql.DB)
 		var task model.Task
 		c.BindJSON(&task)
-		err := model.NewRepository(db).DeleteTask(task.ID)
+		err := data.DeleteTask(task)
 		if err != nil {
 			return
 		}
-		c.JSON(200, nil)
 	}
 }

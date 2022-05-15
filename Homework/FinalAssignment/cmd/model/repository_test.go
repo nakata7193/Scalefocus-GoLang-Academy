@@ -2,6 +2,10 @@ package model
 
 import "testing"
 
+type FakeStorage struct {
+	
+}
+
 func TestGetTasks(t *testing.T) {
 	t.Skip("Not implemented")
 }
