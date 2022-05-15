@@ -64,7 +64,7 @@ func (r *Repository) ToggleTask(task Task) (Task, error) {
 	}
 
 	query = "SELECT id, txt, completed FROM Tasks WHERE id = (?)"
-	resultTask := r.db.Query(task.ID).Scan(&task.ID, &task.Text, &task.ListID, &task.Completed)
+	err = r.db.QueryRow(query, task.ID).Scan(&task.ID, &task.Text, &task.ListID, &task.Completed)
 
 	return task, nil
 }

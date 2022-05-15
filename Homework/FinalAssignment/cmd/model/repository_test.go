@@ -14,11 +14,10 @@ type FakeStorage struct {
 const (
 	CreateListTable = "CREATE TABLE IF NOT EXISTS Lists(id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT)"
 	CreateTaskTable = "CREATE TABLE IF NOT EXISTS Tasks(id INTEGER PRIMARY KEY AUTOINCREMENT,txt TEXT,list_id INTEGER,completed BOOLEAN NOT NULL DEFAULT 0,FOREIGN KEY (list_id) REFERENCES Lists(id) ON DELETE CASCADE)"
-	
+
 	CreateList = "INSERT INTO Lists (name) VALUES (?)"
 	DeleteList = "DELETE FROM Lists WHERE id = (?)"
-	
-	
+
 	CreateTask = "INSERT INTO Tasks (txt, list_id) VALUES (?, ?)"
 	ToggleTask = "SELECT id, txt, completed FROM Tasks WHERE id = (?)"
 	DeleteTask = "DELETE FROM Tasks WHERE id = (?)"
@@ -90,7 +89,6 @@ func TestDeleteList(t *testing.T) {
 	}
 }
 
-
 func TestGetTasks(t *testing.T) {
 	repo := mockDbRepo()
 	list := List{Name: "Test List"}
@@ -136,7 +134,7 @@ func TestToggleTask(t *testing.T) {
 	task := Task{Text: "Test Task", ListID: list.ID}
 	repo.db.Exec(CreateTask, task.Text, task.ListID)
 
-	completedTask,err := repo.ToggleTask(task)
+	completedTask, err := repo.ToggleTask(task)
 	if err != nil {
 		t.Error(err)
 	}
@@ -153,7 +151,7 @@ func TestDeleteTask(t *testing.T) {
 	repo.db.Exec(CreateList, list.Name)
 	task := Task{Text: "Test Task", ListID: list.ID}
 	repo.db.Exec(CreateList, task.Text, task.ListID)
-	
+
 	repo.DeleteTask(task)
 
 	tasks, err := repo.GetTasks(list)
