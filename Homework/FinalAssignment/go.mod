@@ -8,6 +8,7 @@ require (
 )
 
 require (
+	github.com/briandowns/openweathermap v0.16.0
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/flowchartsman/swaggerui v0.0.0-20210303154956-0e71c297862e // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect

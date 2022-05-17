@@ -83,11 +83,15 @@ func TestDeleteList(t *testing.T) {
 	list := List{Name: "Test List"}
 	repo.db.Exec(CreateList, list.Name)
 
-	repo.DeleteList(list)
+	err := repo.DeleteList(list)
+	if err != nil{
+		t.Error(err)
+	}
 	lists, err := repo.GetLists()
 	if err != nil {
 		t.Error(err)
 	}
+
 
 	if len(lists) != 0 {
 		t.Errorf("Expected 0 lists, got %d", len(lists))

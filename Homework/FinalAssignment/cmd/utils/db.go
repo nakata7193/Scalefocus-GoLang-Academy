@@ -15,3 +15,4 @@ func DbInit() *model.Repository {
 	repository := model.NewRepository(db)
 	return repository
 }
+

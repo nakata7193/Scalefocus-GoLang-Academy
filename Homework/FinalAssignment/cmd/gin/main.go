@@ -16,11 +16,13 @@ func main() {
 
 	router := gin.Default()
 
-	router.Use(func(ctx *gin.Context) {
-		// This is a sample demonstration of how to attach middlewares in Gin
-		log.Println("Gin middleware was called")
-		ctx.Next()
-	})
+	// router.Use(func(ctx *gin.Context) {
+	// 	// This is a sample demonstration of how to attach middlewares in Gin
+	// 	gin.BasicAuth(gin.Accounts{
+	// 		"admin": "admin",
+	// 	})(ctx)
+
+	// })
 
 	//GET /api/lists/:id/tasks
 	router.GET("/api/lists/:id/tasks", controllers.GetTasks(repository))
@@ -42,6 +44,9 @@ func main() {
 
 	//DELETE /api/lists/:id
 	router.DELETE("/api/lists/:id", controllers.DeleteList(repository))
+
+	//Weather API endpoint
+	router.GET("/api/weather", controllers.GetWeather)
 
 	// Do not touch this line!
 	log.Fatal(http.ListenAndServe(":3000", cmd.CreateCommonMux(router)))
