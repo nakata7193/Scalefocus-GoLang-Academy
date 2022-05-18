@@ -65,7 +65,7 @@ func (r *Repository) ToggleTask(taskID int) error {
 }
 
 func (r *Repository) DeleteTask(taskID int) error {
-	_, err := r.db.Exec("DELETE FROM Tasks WHERE id = ?)", taskID)
+	_, err := r.db.Exec("DELETE FROM Tasks WHERE id = (?)", taskID)
 	if err != nil {
 		return err
 	}
