@@ -31,12 +31,11 @@ func CreateTask(data model.TaskOperations) gin.HandlerFunc {
 		listID := c.Param("id")
 		task := model.Task{}
 		c.BindJSON(&task)
-		taskText := c.Request.Header.Get("text")
 		id, err := strconv.Atoi(listID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "func error"})
 		}
-		err = data.CreateTask(id, taskText)
+		err = data.CreateTask(id, task.Text)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Task"})
 		}

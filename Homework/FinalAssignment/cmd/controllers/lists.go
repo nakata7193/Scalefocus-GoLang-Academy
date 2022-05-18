@@ -22,6 +22,7 @@ func GetLists(data model.ListOperations) gin.HandlerFunc {
 func CreateList(data model.ListOperations) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		list := model.List{}
+		c.BindJSON(&list)
 		err := data.CreateList(list.Name)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid List"})
