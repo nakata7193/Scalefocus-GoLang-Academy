@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"final/cmd/model"
+	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,27 +18,26 @@ func GetLists(data model.ListOperations) gin.HandlerFunc {
 	}
 }
 
+//DO NOT TOUCH THIS
 func CreateList(data model.ListOperations) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var list model.List
-		c.BindJSON(&list)
-		list, err := data.CreateList(list)
+		list := model.List{}
+		err := data.CreateList(list.Name)
 		if err != nil {
-			return
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid List"})
 		}
-
-		c.JSON(200, gin.H{
-			"id":   list.ID,
-			"name": list.Name,
-		})
+		c.JSON(200, list)
 	}
 }
 
 func DeleteList(data model.ListOperations) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var list model.List
-		c.BindJSON(&list)
-		err := data.DeleteList(list)
+		listID := c.Param("id")
+		id, err := strconv.Atoi(listID)
+		if err != nil {
+			return
+		}
+		err = data.DeleteList(id)
 		if err != nil {
 			return
 		}

@@ -8,9 +8,9 @@ CREATE TABLE IF NOT EXISTS Lists(
 CREATE TABLE IF NOT EXISTS Tasks(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	txt TEXT,
-	listID INTEGER,
+	list_id INTEGER,
 	completed BOOLEAN NOT NULL DEFAULT 0,
-	FOREIGN KEY (listID) REFERENCES Lists(id) ON DELETE CASCADE
+	FOREIGN KEY (list_id) REFERENCES Lists(id) ON DELETE CASCADE
 )
 
 DROP TABLE Tasks 
@@ -25,14 +25,14 @@ INSERT INTO Lists (name)
 VALUES("TEST2")
 
 --ADD A TASK
-INSERT INTO Tasks(txt,listID)
+INSERT INTO Tasks(txt,list_id)
 VALUES("test1",2)
 
 --GET ALL LISTS
 SELECT * FROM Lists 
 
 --TAKE ALL TASKS FROM A LIST
-SELECT Txt, Completed from Tasks where listID = 1
+SELECT Txt, Completed from Tasks where list_id = 1
 
 --TOGGLE TASK
 UPDATE Tasks

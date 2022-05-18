@@ -9,8 +9,9 @@ import (
 
 func GetWeather(c *gin.Context) {
 	var latitude, longitude string
-	c.BindJSON(&longitude)
-	c.BindJSON(&latitude)
+	latitude = c.Request.Header.Get("lat")
+	longitude = c.Request.Header.Get("lon")
+
 	weather, err := utils.GetWeather(latitude, longitude)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

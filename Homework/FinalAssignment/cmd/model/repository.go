@@ -11,32 +11,32 @@ type Repository struct {
 }
 
 type TaskOperations interface {
-	GetTasks(list List) ([]Task, error)
-	CreateTask(task Task, list List) (Task, error)
-	ToggleTask(task Task) (Task, error)
-	DeleteTask(task Task) error
+	GetTasks(listID int) ([]Task, error)
+	CreateTask(listID int, taskText string) error
+	ToggleTask(taskID int) error
+	DeleteTask(taskID int) error
 }
 
 type ListOperations interface {
 	GetLists() ([]List, error)
-	CreateList(list List) (List, error)
-	DeleteList(list List) error
+	CreateList(listName string) error
+	DeleteList(listID int) error
 }
 
 func NewRepository(db *sql.DB) *Repository {
 	return &Repository{db: db}
 }
 
-func (r *Repository) GetTasks(list List) ([]Task, error) {
+func (r *Repository) GetTasks(listID int) ([]Task, error) {
 	tasks := []Task{}
 	query := "SELECT * from Tasks WHERE list_id = (?)"
-	rows, err := r.db.Query(query, list.ID)
+	rows, err := r.db.Query(query, listID)
 	if err != nil {
 		return nil, err
 	}
 
 	for rows.Next() {
-		var task Task
+		task := Task{}
 		err := rows.Scan(&task.ID, &task.Text, &task.ListID, &task.Completed)
 		if err != nil {
 			return nil, err
@@ -46,31 +46,26 @@ func (r *Repository) GetTasks(list List) ([]Task, error) {
 	return tasks, nil
 }
 
-func (r *Repository) CreateTask(task Task, list List) (Task, error) {
+func (r *Repository) CreateTask(listID int, taskText string) error {
 	query := "INSERT INTO Tasks (txt, list_id) VALUES (?, ?)"
-	err := r.db.QueryRow(query, task.Text, list.ID).Scan(&task.ID, &task.Text, &task.ListID, &task.Completed)
+	_, err := r.db.Exec(query, taskText, listID)
 	if err != nil {
-		return task, err
+		return err
 	}
-
-	return task, nil
+	return nil
 }
 
-func (r *Repository) ToggleTask(task Task) (Task, error) {
+func (r *Repository) ToggleTask(taskID int) error {
 	query := "UPDATE Tasks SET completed = NOT completed WHERE id = (?)"
-	_, err := r.db.Exec(query, task.ID)
+	_, err := r.db.Exec(query, taskID)
 	if err != nil {
-		return task, err
+		return err
 	}
-
-	query = "SELECT id, txt, completed FROM Tasks WHERE id = (?)"
-	err = r.db.QueryRow(query, task.ID).Scan(&task.ID, &task.Text, &task.ListID, &task.Completed)
-
-	return task, nil
+	return nil
 }
 
-func (r *Repository) DeleteTask(task Task) error {
-	_, err := r.db.Exec("DELETE FROM Tasks WHERE id = ?)", task.ID)
+func (r *Repository) DeleteTask(taskID int) error {
+	_, err := r.db.Exec("DELETE FROM Tasks WHERE id = ?)", taskID)
 	if err != nil {
 		return err
 	}
@@ -97,18 +92,17 @@ func (r *Repository) GetLists() ([]List, error) {
 	return lists, nil
 }
 
-func (r *Repository) CreateList(list List) (List, error) {
+func (r *Repository) CreateList(listName string) error {
 	query := "INSERT INTO Lists (name) VALUES (?)"
-	err := r.db.QueryRow(query, list.Name).Scan(&list.ID, &list.Name)
+	_, err := r.db.Exec(query, listName)
 	if err != nil {
-		return list, err
+		return err
 	}
-
-	return list, nil
+	return nil
 }
 
-func (r *Repository) DeleteList(list List) error {
-	_, err := r.db.Exec("DELETE FROM Lists WHERE id = (?)", list.ID)
+func (r *Repository) DeleteList(listID int) error {
+	_, err := r.db.Exec("DELETE FROM Lists WHERE id = (?)", listID)
 	if err != nil {
 		return err
 	}

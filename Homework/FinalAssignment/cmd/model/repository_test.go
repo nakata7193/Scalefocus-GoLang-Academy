@@ -2,7 +2,6 @@ package model
 
 import (
 	"database/sql"
-	"reflect"
 	"testing"
 
 	_ "modernc.org/sqlite"
@@ -11,13 +10,13 @@ import (
 const (
 	PragmaMeta      = "PRAGMA foreign_keys = ON"
 	CreateListTable = "CREATE TABLE IF NOT EXISTS Lists(id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT)"
-	CreateTaskTable = "CREATE TABLE IF NOT EXISTS Tasks(id INTEGER PRIMARY KEY AUTOINCREMENT,txt TEXT,list_id INTEGER,completed BOOLEAN NOT NULL DEFAULT 0,FOREIGN KEY (list_id) REFERENCES Lists(id) ON DELETE CASCADE)"
+	CreateTaskTable = "CREATE TABLE IF NOT EXISTS Tasks(id INTEGER PRIMARY KEY AUTOINCREMENT,txt TEXT,list_id INTEGER,completed BOOLEAN NOT NULL ,FOREIGN KEY (list_id) REFERENCES Lists(id) ON DELETE CASCADE)"
 
 	CreateList = "INSERT INTO Lists (name) VALUES (?)"
 	DeleteList = "DELETE FROM Lists WHERE id = (?)"
 
 	CreateTask = "INSERT INTO Tasks (txt, list_id) VALUES (?, ?)"
-	ToggleTask = "SELECT id, txt, completed FROM Tasks WHERE id = (?)"
+	ToggleTask = "UPDATE Tasks SET completed = NOT completed WHERE id = (?)"
 	DeleteTask = "DELETE FROM Tasks WHERE id = (?)"
 )
 
@@ -65,7 +64,7 @@ func TestGetLists(t *testing.T) {
 func TestCreateList(t *testing.T) {
 	repo := mockDbRepo()
 	list := List{Name: "Test List"}
-	repo.CreateList(list)
+	repo.CreateList(list.Name)
 	lists, err := repo.GetLists()
 	if err != nil {
 		t.Error(err)
@@ -74,24 +73,25 @@ func TestCreateList(t *testing.T) {
 	if len(lists) != 1 {
 		t.Errorf("Expected 1 list, got %d", len(lists))
 	}
+	if lists[0].Name != "Test List" {
+		t.Errorf("Expected %s, got %s", list.Name, lists[0].Name)
+	}
 
 }
 
 func TestDeleteList(t *testing.T) {
 	repo := mockDbRepo()
-
-	list := List{Name: "Test List"}
+	list := List{Name: "Test List", ID: 1}
 	repo.db.Exec(CreateList, list.Name)
 
-	err := repo.DeleteList(list)
-	if err != nil{
+	err := repo.DeleteList(list.ID)
+	if err != nil {
 		t.Error(err)
 	}
 	lists, err := repo.GetLists()
 	if err != nil {
 		t.Error(err)
 	}
-
 
 	if len(lists) != 0 {
 		t.Errorf("Expected 0 lists, got %d", len(lists))
@@ -100,13 +100,13 @@ func TestDeleteList(t *testing.T) {
 
 func TestGetTasks(t *testing.T) {
 	repo := mockDbRepo()
-	list := List{Name: "Test List"}
+	list := List{Name: "Test List", ID: 1}
 	repo.db.Exec(CreateList, list.Name)
 
 	task := Task{Text: "Test Task", ListID: list.ID}
 	repo.db.Exec(CreateTask, task.Text, task.ListID)
 
-	tasks, err := repo.GetTasks(list)
+	tasks, err := repo.GetTasks(list.ID)
 	if err != nil {
 		t.Error(err)
 	}
@@ -118,13 +118,14 @@ func TestGetTasks(t *testing.T) {
 
 func TestCreateTask(t *testing.T) {
 	repo := mockDbRepo()
-	list := List{Name: "Test List"}
+	list := List{Name: "Test List", ID: 1}
 	repo.db.Exec(CreateList, list.Name)
 
 	task := Task{Text: "Test Task", ListID: list.ID}
-	repo.CreateTask(task, list)
+	repo.db.Exec(CreateTask, task.Text, task.ListID)
+	
 
-	tasks, err := repo.GetTasks(list)
+	tasks, err := repo.GetTasks(list.ID)
 	if err != nil {
 		t.Error(err)
 	}
@@ -141,16 +142,10 @@ func TestToggleTask(t *testing.T) {
 	repo.db.Exec(CreateList, list.Name)
 
 	task := Task{Text: "Test Task", ListID: list.ID}
-	repo.db.Exec(CreateTask, task.Text, task.ListID)
+	repo.db.Exec(CreateTask, task.Text, list.ID)
 
-	completedTask, err := repo.ToggleTask(task)
-	if err != nil {
-		t.Error(err)
-	}
+	repo.ToggleTask(task.ID)
 
-	if !reflect.DeepEqual(completedTask, task) {
-		t.Errorf("Expected %v, got %v", task, completedTask)
-	}
 }
 
 func TestDeleteTask(t *testing.T) {
@@ -161,9 +156,9 @@ func TestDeleteTask(t *testing.T) {
 	task := Task{Text: "Test Task", ListID: list.ID}
 	repo.db.Exec(CreateList, task.Text, task.ListID)
 
-	repo.DeleteTask(task)
+	repo.DeleteTask(task.ID)
 
-	tasks, err := repo.GetTasks(list)
+	tasks, err := repo.GetTasks(list.ID)
 	if err != nil {
 		t.Error(err)
 	}

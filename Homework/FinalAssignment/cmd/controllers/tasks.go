@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"final/cmd/model"
+	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	_ "modernc.org/sqlite"
@@ -9,60 +11,63 @@ import (
 
 func GetTasks(data model.TaskOperations) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var list model.List
-		c.BindJSON(&list)
-		tasks, err := data.GetTasks(list)
+		listID := c.Param("id")
+		id, err := strconv.Atoi(listID)
 		if err != nil {
-			return
+			c.JSON(http.StatusBadRequest, gin.H{"error": "func error"})
+		}
+
+		tasks, err := data.GetTasks(id)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid List"})
 		}
 		c.JSON(200, tasks)
 	}
 }
 
+//Done: CreateTask
 func CreateTask(data model.TaskOperations) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var list model.List
-		var task model.Task
-		c.BindJSON(&list)
+		listID := c.Param("id")
+		task := model.Task{}
 		c.BindJSON(&task)
-		task, err := data.CreateTask(task, list)
-
+		taskText := c.Request.Header.Get("text")
+		id, err := strconv.Atoi(listID)
 		if err != nil {
-			return
+			c.JSON(http.StatusBadRequest, gin.H{"error": "func error"})
 		}
-		c.JSON(200, gin.H{
-			"id":        task.ID,
-			"text":      task.Text,
-			"list":      list.ID,
-			"completed": task.Completed,
-		})
+		data.CreateTask(id, taskText)
+		c.JSON(200, task)
 	}
 }
 
 func ToggleTask(data model.TaskOperations) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var task model.Task
-		c.BindJSON(&task)
-		task, err := data.ToggleTask(task)
+		taskID := c.Param("id")
+		id, err := strconv.Atoi(taskID)
+
+		data.ToggleTask(id)
+		task := model.Task{}
 		if err != nil {
 			return
 		}
-		c.JSON(200, gin.H{
-			"id":        task.ID,
-			"text":      task.Text,
-			"list":      task.ListID,
-			"completed": task.Completed,
-		})
+
+		c.BindJSON(&task)
+		c.JSON(200, task)
 	}
 }
 
 func DeleteTask(data model.TaskOperations) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var task model.Task
-		c.BindJSON(&task)
-		err := data.DeleteTask(task)
+		taskID := c.Param("id")
+		id, err := strconv.Atoi(taskID)
 		if err != nil {
-			return
+			c.JSON(http.StatusBadRequest, gin.H{"error": "func error"})
+		}
+
+		err = data.DeleteTask(id)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Task"})
 		}
 	}
 }

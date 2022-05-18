@@ -13,9 +13,8 @@ import (
 
 func main() {
 	repository := utils.DbInit()
-
+	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
-
 	// router.Use(func(ctx *gin.Context) {
 	// 	// This is a sample demonstration of how to attach middlewares in Gin
 	// 	gin.BasicAuth(gin.Accounts{
