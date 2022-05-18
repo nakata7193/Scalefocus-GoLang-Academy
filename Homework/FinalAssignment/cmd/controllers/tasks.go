@@ -36,7 +36,10 @@ func CreateTask(data model.TaskOperations) gin.HandlerFunc {
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "func error"})
 		}
-		data.CreateTask(id, taskText)
+		err = data.CreateTask(id, taskText)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Task"})
+		}
 		c.JSON(200, task)
 	}
 }
