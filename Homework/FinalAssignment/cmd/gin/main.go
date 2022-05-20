@@ -44,6 +44,9 @@ func main() {
 	//DELETE /api/lists/:id
 	router.DELETE("/api/lists/:id", controllers.DeleteList(repository))
 
+	//GET CSV file
+	router.GET("/api/list/export", controllers.CSVExport(repository))
+
 	//Weather API endpoint
 	router.GET("/api/weather", controllers.GetWeather)
 
