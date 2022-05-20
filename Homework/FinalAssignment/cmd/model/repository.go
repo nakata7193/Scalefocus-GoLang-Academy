@@ -106,6 +106,7 @@ func (r *Repository) CreateList(listName string) error {
 
 func (r *Repository) DeleteList(listID int) error {
 	_, err := r.db.Exec("DELETE FROM Lists WHERE id = (?)", listID)
+	_, err = r.db.Exec("DELETE FROM Tasks WHERE list_id = (?)", listID)
 	if err != nil {
 		return err
 	}

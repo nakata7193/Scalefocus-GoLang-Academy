@@ -112,6 +112,10 @@ func TestDeleteList(t *testing.T) {
 			t.Error(err)
 		}
 		lists = append(lists, list)
+
+		if list.ID == 1 {
+			t.Errorf("Expected id to be 2, got %d", list.ID)
+		}
 	}
 }
 
@@ -220,4 +224,30 @@ func TestDeleteTask(t *testing.T) {
 			t.Errorf("Expected 1 task, got %d", len(tasks))
 		}
 	}
+}
+
+func TestCSVFile(t *testing.T) {
+	repo := mockDbRepo()
+	list := List{Name: "Test List"}
+	repo.db.Exec(CreateList, list.Name)
+	task := Task{Text: "Test Task", ListID: list.ID}
+	repo.db.Exec(CreateTask, task.Text, task.ListID)
+
+	file, err := repo.CSVExport()
+	if err != nil {
+		t.Error(err)
+	}
+
+	if file == nil {
+		t.Error("Expected file to be not nil")
+	}
+
+	// content, err := ioutil.ReadFile("tasks.csv")
+	// if err != nil {
+	// 	t.Error(err)
+	// }
+
+	// if string(content) != "Test Task" {
+	// 	t.Errorf("Expected content to be Test Task, got %s", string(content))
+	// }
 }

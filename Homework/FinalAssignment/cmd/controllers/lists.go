@@ -46,13 +46,12 @@ func DeleteList(data model.ListOperations) gin.HandlerFunc {
 }
 
 func CSVExport(data model.ListOperations) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		tasks, err := data.CSVExport()
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Task"})
-		}
-		c.FileAttachment("./tasks.csv", "tasks.csv")
-		c.Writer.Header().Set("Content-Disposition", "attachment; filename=tasks.csv")
-		c.JSON(200, tasks)
-	}
+    return func(c *gin.Context) {
+        _, err := data.CSVExport()
+        if err != nil {
+            c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Task"})
+        }
+        c.FileAttachment("./tasks.csv", "tasks.csv")
+        c.Writer.Header().Set("attachment", "filename=tasks.csv")
+    }
 }
