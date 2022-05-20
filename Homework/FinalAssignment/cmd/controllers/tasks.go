@@ -51,7 +51,7 @@ func ToggleTask(data model.TaskOperations) gin.HandlerFunc {
 		data.ToggleTask(id)
 		task := model.Task{}
 		if err != nil {
-			return
+			c.JSON(http.StatusBadRequest, gin.H{"error": "func error"})
 		}
 
 		c.BindJSON(&task)

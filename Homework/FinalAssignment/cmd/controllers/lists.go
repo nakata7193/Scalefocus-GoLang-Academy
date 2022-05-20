@@ -12,7 +12,7 @@ func GetLists(data model.ListOperations) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		lists, err := data.GetLists()
 		if err != nil {
-			return
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid List"})
 		}
 		c.JSON(200, lists)
 	}
@@ -36,11 +36,11 @@ func DeleteList(data model.ListOperations) gin.HandlerFunc {
 		listID := c.Param("id")
 		id, err := strconv.Atoi(listID)
 		if err != nil {
-			return
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid List"})
 		}
 		err = data.DeleteList(id)
 		if err != nil {
-			return
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid List"})
 		}
 	}
 }
